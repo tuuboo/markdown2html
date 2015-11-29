@@ -69,7 +69,7 @@ function makeToc(text) {
         });
 
         return "<h" + p2 + ' id="' + nextId + '">' + levelStr;
-    });
+    }).replace(/<table>/g, '<table class="table table-bordered">');
 }
 
 // Create output directory
@@ -114,7 +114,7 @@ files.forEach(function(md_path) {
 
     // Add table of contents
     if (!argv.t) {
-        tocHtml = '<div class="col-xs-12 col-sm-3 bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav" data-spy="affix">';
+        tocHtml = '<div class="col-xs-12 col-sm-3 bs-docs-sidebar"><ul class="nav nav-pills nav-stacked bs-docs-sidenav" data-spy="affix">';
         toc.forEach(function(entry) {
             tocHtml += '<li><a href="#' + entry.id + '">' + entry.levelStr + entry.title + '</a></li>';
         });
@@ -125,11 +125,11 @@ files.forEach(function(md_path) {
     output = 
         top_part.replace(/\{\{header\}\}/, function() {
             if (argv.h) {
-                return '<header class="jumbotron subhead" id="overview">' +
+                return '<div class="jumbotron subhead" id="overview">' +
                        '<div class="container">' +
                        '<h1>' + tags.title  + '</h1>' +
-                       '<p class="lead">' + tags.subtitle + '</p>' +
-                       '</div></header>';
+                       '<p>' + tags.subtitle + '</p>' +
+                       '</div></div>';
             } else {
                 return "";
             }
