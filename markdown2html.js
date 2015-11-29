@@ -7,15 +7,17 @@ var argv = require('optimist').
         describe('n', 'Turn off numbered sections').
         boolean('h').
         describe('h', 'Turn on bootstrap page header.').
-        describe('outputdir', 'Directory to put the converted files in.').
-        default('outputdir', '.').
+        describe('out', 'Directory to put the converted files in.').
+        default('out', '.').
+        describe('parts', 'Directory of parts files.').
+        default('parts', __dirname + "/parts").
         argv,
     showdown = require('showdown'),
     converter = new showdown.Converter(),
     path = require('path'),
     fs = require('fs'),
-    top_part = fs.readFileSync(__dirname + "/parts/top.html").toString(),
-    bottom_part = fs.readFileSync(__dirname + "/parts/bottom.html").toString(),
+    top_part = fs.readFileSync(path.join(argv.parts, "top.html")).toString(),
+    bottom_part = fs.readFileSync(path.join(argv.parts, "bottom.html")).toString(),
     levels, toc, nextId;
     
     converter.setOption('noHeaderId', true);
@@ -66,22 +68,34 @@ function postDeal(text) {
 
         return "<h" + p2 + ' id="' + nextId + '">' + levelStr;
     }).
-    replace(/<pre>/g, '<pre class="prettyprint">').
     replace(/".*mailto%3a(.*)"/, function(match, p1) {
         return "\"mailto:" + p1  + "\"";
     });
 }
 
 // Create output directory
-argv.outputdir = path.resolve(process.cwd(), argv.outputdir);
-if (!fs.existsSync(argv.outputdir)) {
-    fs.mkdirSync(argv.outputdir);
+argv.out = path.resolve(process.cwd(), argv.out);
+if (!fs.existsSync(argv.out)) {
+    fs.mkdirSync(argv.out);
 }
 
-argv._.forEach(function(md_path) {
+var files = [];
+argv._.forEach(function(p){
+    if( fs.statSync(p).isDirectory() ){
+    	files.concat(fs.readdirSync(p).
+    	  filter(function(fname){
+    		return fname.endsWith(".md") && !fs.statSync( path.join(p, fname) ).isDirectory();
+    	  }).map(function(fname){return path.join(p, fname);})
+    	);
+    }else{
+    	files.push(p);
+    }
+});
+
+files.forEach(function(md_path) {
     var tags = { title: "TITLE HERE", subtitle: "SUBTITLE HERE" },
         md, output, tocHtml = "",
-        output_path = path.join(argv.outputdir, path.basename(md_path));
+        output_path = path.join(argv.out, path.basename(md_path));
 
     // Determine output filename
     if (/\.md$/.test(output_path)) {
