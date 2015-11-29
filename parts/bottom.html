@@ -7,10 +7,14 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.js"></script>
-    <script src="bootstrap/js/google-code-prettify/prettify.js"></script>
-    <script src="bootstrap/js/bootstrap.js"></script>
-    <script type="text/javascript">prettyPrint();</script>
+    <script src="/assets/jquery/jquery-1.11.1.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/assets/highlight.js/highlight.pack.js"></script>
+    <script type="text/javascript">
+    $(function(){
+          $('pre code').each(function(i, block) {hljs.highlightBlock(block);});
+      });
+    </script>
 
   </body>
 </html>
