@@ -11,13 +11,18 @@ var argv = require('optimist').
         default('outputdir', '.').
         argv,
     showdown = require('showdown'),
-    showdown_github = require('showdown-github'),
-    converter = new showdown.Converter({extensions: ['github']}),
+    converter = new showdown.Converter(),
     path = require('path'),
     fs = require('fs'),
     top_part = fs.readFileSync(__dirname + "/parts/top.html").toString(),
     bottom_part = fs.readFileSync(__dirname + "/parts/bottom.html").toString(),
     levels, toc, nextId;
+    
+    converter.setOption('noHeaderId', true);
+    converter.setOption('strikethrough', true);
+    converter.setOption('mitExtraWLInCodeBlocks', true);
+    converter.setOption('tables', true);
+    converter.setOption('tablesHeaderId', true);
 
 function findTag(md, tag, obj) {
     var re = new RegExp("^<!-- " + tag + ": (.+) -->", "m"), match = md.match(re);
