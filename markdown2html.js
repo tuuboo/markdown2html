@@ -69,7 +69,7 @@ function makeToc(text) {
         });
 
         return "<h" + p2 + ' id="' + nextId + '">' + levelStr;
-    }).replace(/<table>/g, '<table class="table table-bordered">');
+    }).replace(/<table>/g, '<table class="table table-bordered table-striped">');
 }
 
 // Create output directory
