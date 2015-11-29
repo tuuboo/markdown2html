@@ -7,6 +7,8 @@ var argv = require('optimist').
         describe('n', 'Turn off numbered sections').
         boolean('h').
         describe('h', 'Turn on bootstrap page header.').
+        boolean('t').
+        describe('t', 'Turn off TOC.').
         describe('out', 'Directory to put the converted files in.').
         default('out', '.').
         describe('parts', 'Directory of parts files.').
@@ -37,7 +39,7 @@ function findTag(md, tag, obj) {
 }
 
 // Configure section and toc generation
-function postDeal(text) {
+function makeToc(text) {
     return text.replace(/<(h(\d))>/g, function(match, p1, p2, offset, str) {
         var i, levelStr = "";
 
@@ -67,9 +69,6 @@ function postDeal(text) {
         });
 
         return "<h" + p2 + ' id="' + nextId + '">' + levelStr;
-    }).
-    replace(/".*mailto%3a(.*)"/, function(match, p1) {
-        return "\"mailto:" + p1  + "\"";
     });
 }
 
@@ -111,14 +110,16 @@ files.forEach(function(md_path) {
     findTag(md, "subtitle", tags);
 
     levels = {}; nextId = 0; toc = [];
-    output = converter.makeHtml(md);
+    output = makeToc(converter.makeHtml(md));
 
     // Add table of contents
-    tocHtml += '<div class="span3 bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav" data-spy="affix">';
-    toc.forEach(function(entry) {
-        tocHtml += '<li><a href="#' + entry.id + '">' + entry.levelStr + entry.title + '</a></li>';
-    });
-    tocHtml += '</ul></div><div class="span9">';
+    if (!argv.t) {
+        tocHtml += '<div class="span3 bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav" data-spy="affix">';
+        toc.forEach(function(entry) {
+            tocHtml += '<li><a href="#' + entry.id + '">' + entry.levelStr + entry.title + '</a></li>';
+        });
+        tocHtml += '</ul></div>';
+    }
 
     // Bootstrap-fy
     output = 
