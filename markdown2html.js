@@ -93,7 +93,7 @@ argv._.forEach(function(p){
 
 files.forEach(function(md_path) {
     var tags = { title: "TITLE HERE", subtitle: "SUBTITLE HERE" },
-        md, output, tocHtml = "",
+        md, output, tocHtml = '<div class="col-xs-12 col-sm-12">',
         output_path = path.join(argv.out, path.basename(md_path));
 
     // Determine output filename
@@ -114,11 +114,11 @@ files.forEach(function(md_path) {
 
     // Add table of contents
     if (!argv.t) {
-        tocHtml += '<div class="span3 bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav" data-spy="affix">';
+        tocHtml = '<div class="col-xs-12 col-sm-3 bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav" data-spy="affix">';
         toc.forEach(function(entry) {
             tocHtml += '<li><a href="#' + entry.id + '">' + entry.levelStr + entry.title + '</a></li>';
         });
-        tocHtml += '</ul></div>';
+        tocHtml += '</ul></div><div class="col-xs-12 col-sm-9">';
     }
 
     // Bootstrap-fy
